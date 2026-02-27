@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NFL Confidence Pool{% endblock %}</title>
+
+    <!-- Material Design CSS -->
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+        }
+        .mdc-top-app-bar {
+            background-color: #013369;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .app-content {
+            margin-top: 64px;
+            padding: 24px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .mdc-card {
+            margin-bottom: 24px;
+        }
+        .nfl-red {
+            background-color: #D50A0A !important;
+        }
+        .nfl-red-text {
+            color: #D50A0A !important;
+        }
+        .mdc-button.nfl-red {
+            color: white;
+        }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <!-- Top App Bar -->
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <a href="{% url 'pool:home' %}" class="mdc-top-app-bar__title" style="text-decoration: none; color: white;">
+                    🏈 NFL Confidence Pool
+                </a>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'pool:home' %}" class="mdc-top-app-bar__action-item" style="color: white; text-decoration: none; margin: 0 12px;">Home</a>
+                    <a href="{% url 'pool:leaderboard' %}" class="mdc-top-app-bar__action-item" style="color: white; text-decoration: none; margin: 0 12px;">Leaderboard</a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'admin:index' %}" target="_blank" class="mdc-top-app-bar__action-item" style="color: white; text-decoration: none; margin: 0 12px;">Admin</a>
+                    {% endif %}
+                    <span style="color: white; margin: 0 12px;">{{ user.email }}</span>
+                    <form method="post" action="{% url 'account_logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="mdc-button" style="color: white;">
+                            <span class="mdc-button__label">Logout</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="mdc-button" style="color: white;">
+                        <span class="mdc-button__label">Login</span>
+                    </a>
+                    <a href="{% url 'account_signup' %}" class="mdc-button nfl-red">
+                        <span class="mdc-button__label">Sign Up</span>
+                    </a>
+                {% endif %}
+            </section>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mdc-snackbar mdc-snackbar--open" style="position: relative; margin-bottom: 16px;">
+                    <div class="mdc-snackbar__surface" style="background-color: {% if message.tags == 'error' %}#f44336{% elif message.tags == 'success' %}#4caf50{% elif message.tags == 'warning' %}#ff9800{% else %}#2196f3{% endif %};">
+                        <div class="mdc-snackbar__label" style="color: white;">
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Material Design JS -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>
+        window.mdc.autoInit();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

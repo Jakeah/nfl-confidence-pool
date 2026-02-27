@@ -1,0 +1,97 @@
+{% extends 'pool/base.html' %}
+
+{% block title %}Sign Up - NFL Confidence Pool{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 480px;
+        margin: 40px auto;
+    }
+    .mdc-text-field {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+    .help-text {
+        font-size: 12px;
+        color: #666;
+        margin-top: -12px;
+        margin-bottom: 16px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="mdc-card" style="padding: 32px;">
+        <h1 class="mdc-typography--headline4" style="margin-bottom: 8px; color: #013369;">
+            Sign Up
+        </h1>
+        <p class="mdc-typography--body2" style="color: #666; margin-bottom: 24px;">
+            Create your NFL Confidence Pool account
+        </p>
+
+        <!-- Signup Form -->
+        <form method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div style="padding: 12px; background-color: #ffebee; color: #c62828; border-radius: 4px; margin-bottom: 16px;">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <label class="mdc-text-field mdc-text-field--filled" style="width: 100%;">
+                <span class="mdc-text-field__ripple"></span>
+                <span class="mdc-floating-label" id="email-label">Email</span>
+                {{ form.email }}
+                <span class="mdc-line-ripple"></span>
+            </label>
+            {% if form.email.errors %}
+                <div style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 16px;">
+                    {{ form.email.errors }}
+                </div>
+            {% endif %}
+
+            <label class="mdc-text-field mdc-text-field--filled" style="width: 100%;">
+                <span class="mdc-text-field__ripple"></span>
+                <span class="mdc-floating-label" id="password1-label">Password</span>
+                {{ form.password1 }}
+                <span class="mdc-line-ripple"></span>
+            </label>
+            {% if form.password1.errors %}
+                <div style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 16px;">
+                    {{ form.password1.errors }}
+                </div>
+            {% endif %}
+            {% if form.password1.help_text %}
+                <div class="help-text">{{ form.password1.help_text|safe }}</div>
+            {% endif %}
+
+            <label class="mdc-text-field mdc-text-field--filled" style="width: 100%;">
+                <span class="mdc-text-field__ripple"></span>
+                <span class="mdc-floating-label" id="password2-label">Confirm Password</span>
+                {{ form.password2 }}
+                <span class="mdc-line-ripple"></span>
+            </label>
+            {% if form.password2.errors %}
+                <div style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 16px;">
+                    {{ form.password2.errors }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="mdc-button mdc-button--raised nfl-red" style="width: 100%; margin-top: 24px;">
+                <span class="mdc-button__label">Create Account</span>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 24px; color: #666;">
+            <p>
+                Already have an account? <a href="{% url 'account_login' %}" style="color: #013369; text-decoration: none; font-weight: 500;">Sign in</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

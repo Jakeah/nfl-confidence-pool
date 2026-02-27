@@ -1,0 +1,123 @@
+{% extends 'pool/base.html' %}
+
+{% block title %}Leaderboard - {{ season.year }} Season - NFL Confidence Pool{% endblock %}
+
+{% block extra_css %}
+<style>
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .leaderboard-table thead {
+        background-color: #013369;
+        color: white;
+    }
+    .leaderboard-table th {
+        padding: 16px;
+        text-align: left;
+        font-weight: 500;
+    }
+    .leaderboard-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .leaderboard-table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    .rank-display {
+        font-size: 24px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .rank-medal {
+        font-size: 28px;
+    }
+    .rank-1 { color: #ffd700; }
+    .rank-2 { color: #c0c0c0; }
+    .rank-3 { color: #cd7f32; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mdc-typography--headline4" style="margin-bottom: 24px; color: #013369;">
+    <i class="material-icons" style="vertical-align: middle; font-size: 36px;">emoji_events</i>
+    {{ season.year }} Season Leaderboard
+</div>
+
+<div class="mdc-card" style="padding: 24px;">
+    <h2 class="mdc-typography--headline6" style="margin-bottom: 8px;">Season Standings</h2>
+    <p style="color: #666; margin-bottom: 24px; font-size: 14px;">
+        <i class="material-icons" style="font-size: 16px; vertical-align: middle;">info</i>
+        Rankings based on Playoff Points (awarded 20-1 pts for weekly finishes 1st-16th)
+    </p>
+
+    {% if standings %}
+        <div style="overflow-x: auto;">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Rank</th>
+                        <th>Player</th>
+                        <th style="text-align: right; width: 150px; background-color: #fff3cd;">Playoff Pts</th>
+                        <th style="text-align: right; width: 150px;">Total Pts</th>
+                        <th style="text-align: center; width: 120px;">Survivor</th>
+                        <th style="text-align: center; width: 100px;">Strikes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stats in standings %}
+                    <tr>
+                        <td>
+                            <div class="rank-display">
+                                {% if forloop.counter == 1 %}
+                                    <span class="rank-medal rank-1">🥇</span>
+                                {% elif forloop.counter == 2 %}
+                                    <span class="rank-medal rank-2">🥈</span>
+                                {% elif forloop.counter == 3 %}
+                                    <span class="rank-medal rank-3">🥉</span>
+                                {% else %}
+                                    <span style="color: #666;">#{{ forloop.counter }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 500;">{{ stats.user.email }}</div>
+                        </td>
+                        <td style="text-align: right; background-color: #fffbef;">
+                            <span style="font-size: 24px; font-weight: 700; color: #f57c00;">
+                                {{ stats.playoff_points }}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <span style="font-size: 16px; font-weight: 500; color: #666;">
+                                {{ stats.total_confidence_points }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            {% if stats.is_eliminated_survivor %}
+                                <span style="color: #f44336;">❌</span>
+                            {% else %}
+                                <span style="color: #4caf50;">✅</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center;">
+                            <span style="font-weight: 500; color: {% if stats.survivor_strikes >= 2 %}#f44336{% elif stats.survivor_strikes == 1 %}#ff9800{% else %}#4caf50{% endif %};">
+                                {{ stats.survivor_strikes }}/3
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 48px; color: #666;">
+            <i class="material-icons" style="font-size: 64px; color: #ccc;">leaderboard</i>
+            <p class="mdc-typography--headline6" style="margin-top: 16px;">No standings yet</p>
+            <p class="mdc-typography--body2">Check back after the first week of picks!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
